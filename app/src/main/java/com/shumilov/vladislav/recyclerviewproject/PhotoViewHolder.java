@@ -25,4 +25,17 @@ public class PhotoViewHolder extends RecyclerView.ViewHolder {
 
         Picasso.with(context).load(item.getUrl()).into(mPhotoView);
     }
+
+    public void setListener(final OnItemClickListener listener, final PhotoItem listItem, final int position) {
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(listItem, position);
+            }
+        });
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Object object, int position);
+    }
 }

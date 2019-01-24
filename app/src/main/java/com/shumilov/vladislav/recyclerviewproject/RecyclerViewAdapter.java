@@ -9,8 +9,9 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements TextNewsViewHolder.OnItemClickListener, PhotoViewHolder.OnItemClickListener {
     private final int NEWS = 0, PHOTO = 1;
+    private OnItemClickListener mListener;
 
     private List<Object> items = new ArrayList<>();
 
@@ -34,18 +35,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         int viewType = getItemViewType(position);
 
         if (viewType == NEWS) {
             TextNewsViewHolder textViewHolder = (TextNewsViewHolder) holder;
             textViewHolder.bind((TextNewsItem) items.get(position));
+            textViewHolder.setListener(this, (TextNewsItem) items.get(position), position);
             return;
         }
 
         if (viewType == PHOTO) {
             PhotoViewHolder imageViewHolder = (PhotoViewHolder) holder;
             imageViewHolder.bind((PhotoItem) items.get(position));
+            imageViewHolder.setListener(this, (PhotoItem) items.get(position), position);
             return;
         }
     }
@@ -75,5 +78,25 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         items.add(item);
         notifyDataSetChanged();
+    }
+
+    public void setListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
+
+    @Override
+    public void onItemClick(Object object, int position) {
+        mListener.onItemClick(items.get(position), position);
+        removeAt(position);
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Object object, int position);
+    }
+
+    private void removeAt(int position) {
+        items.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, items.size());
     }
 }

@@ -2,4 +2,6 @@
     <string name="app_name">RecyclerViewProject</string>
     <string name="add_news">Добавить новость</string>
     <string name="add_photo">Добавить фото</string>
+    <string name="news_was_deleted">Удалена новость:</string>
+    <string name="photo_was_deleted">Удалена фотография:</string>
 </resources>

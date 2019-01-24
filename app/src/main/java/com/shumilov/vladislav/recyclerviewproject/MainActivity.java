@@ -6,10 +6,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.OnItemClickListener {
 
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mAdapter;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
                 "ru/userfiles/images/2%281124%29.jpg"));
 
         mAdapter = new RecyclerViewAdapter(list);
+        mAdapter.setListener(this);
 
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -54,5 +56,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(Object object, int position) {
+        String text = "";
+
+        if (object instanceof TextNewsItem) {
+            text = getString(R.string.news_was_deleted) + ((TextNewsItem) object).getComment();
+        } else if (object instanceof PhotoItem) {
+            text = getString(R.string.photo_was_deleted) + ((PhotoItem) object).getUrl();
+        }
+
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 }
