@@ -6,12 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int NEWS = 0, PHOTO = 1;
 
-    private List<Object> items;
+    private List<Object> items = new ArrayList<>();
 
     public RecyclerViewAdapter(List<Object> items) {
         this.items = items;
@@ -65,5 +66,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         return -1;
+    }
+
+    public void addItem(Object item) {
+        if (item == null || (!(item instanceof TextNewsItem) && !(item instanceof PhotoItem))) {
+            return;
+        }
+
+        items.add(item);
+        notifyDataSetChanged();
     }
 }
