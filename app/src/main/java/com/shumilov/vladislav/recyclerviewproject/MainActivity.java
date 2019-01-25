@@ -2,6 +2,7 @@ package com.shumilov.vladislav.recyclerviewproject;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,9 +12,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private RecyclerView mRecyclerView;
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerViewAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private Parcelable mListState;
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         }
 
         mRecyclerView = findViewById(R.id.recyclerView);
+        mSwipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
@@ -81,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         if (mListState != null) {
             mLayoutManager.onRestoreInstanceState(mListState);
         }
+
+        mSwipeRefreshLayout.setOnRefreshListener(this);
     }
 
     @Override
@@ -118,5 +124,19 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         }
 
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRefresh() {
+        mSwipeRefreshLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fillByDefaultData();
+
+                if (mSwipeRefreshLayout.isRefreshing()) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        }, 2000);
     }
 }
