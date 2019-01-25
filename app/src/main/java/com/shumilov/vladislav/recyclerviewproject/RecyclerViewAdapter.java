@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements TextNewsViewHolder.OnItemClickListener, PhotoViewHolder.OnItemClickListener {
     private final int NEWS = 0, PHOTO = 1;
-    private OnItemClickListener mListener;
+    private RecyclerViewListener mListener;
 
     private ArrayList<BaseObject> mItems = new ArrayList<>();
 
@@ -77,9 +77,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         mItems.add(item);
         notifyDataSetChanged();
+
+        mListener.onItemAdd(item, mItems.size() - 1);
     }
 
-    public void setListener(OnItemClickListener listener) {
+    public void setListener(RecyclerViewListener listener) {
         mListener = listener;
     }
 
@@ -89,8 +91,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         removeItem(position);
     }
 
-    public interface OnItemClickListener {
+    public interface RecyclerViewListener {
         void onItemClick(Object object, int position);
+
+        void onItemAdd(Object object, int position);
     }
 
     private void removeItem(int position) {

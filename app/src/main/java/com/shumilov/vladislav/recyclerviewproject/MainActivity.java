@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.RecyclerViewListener, SwipeRefreshLayout.OnRefreshListener {
 
     private RecyclerView mRecyclerView;
 
@@ -124,6 +124,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         }
 
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onItemAdd(Object object, int position) {
+        mLayoutManager.scrollToPosition(position);
     }
 
     @Override
