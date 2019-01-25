@@ -3,34 +3,22 @@ package com.shumilov.vladislav.recyclerviewproject;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class PhotoItem extends BaseObject implements Parcelable {
+public class BaseObject implements Parcelable {
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         @Override
         public Object createFromParcel(Parcel source) {
-            return new PhotoItem(source);
+            return new BaseObject();
         }
 
-        public PhotoItem[] newArray(int size) {
-            return new PhotoItem[size];
+        public BaseObject[] newArray(int size) {
+            return new BaseObject[size];
         }
     };
 
     private String mUrl;
 
-    public PhotoItem(String uri) {
-        mUrl = uri;
-    }
+    public BaseObject() {
 
-    public PhotoItem(Parcel in) {
-        mUrl = in.readString();
-    }
-
-    public String getUrl() {
-        return mUrl;
-    }
-
-    public void setUrl(String url) {
-        mUrl = url;
     }
 
     @Override
@@ -40,6 +28,7 @@ public class PhotoItem extends BaseObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mUrl);
+
     }
+
 }

@@ -1,6 +1,7 @@
 package com.shumilov.vladislav.recyclerviewproject;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,24 +15,72 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mAdapter;
+    private LinearLayoutManager mLayoutManager;
+    private Parcelable mListState;
     private static final String sHello = "Привет";
+    private static final String LIST_STATE_KEY = "LIST_STATE_KEY";
+    private static final String ITEMS_KEY = "ITEMS_KEY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ArrayList<Object> list = new ArrayList<>();
+        mAdapter = new RecyclerViewAdapter();
+        mAdapter.setListener(this);
+
+        if (savedInstanceState == null) {
+            fillByDefaultData();
+        }
+
+        mRecyclerView = findViewById(R.id.recyclerView);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void fillByDefaultData() {
+        ArrayList<BaseObject> list = new ArrayList<>();
         list.add(new TextNewsItem(sHello));
         list.add(new PhotoItem("https://peopletalk." +
                 "ru/userfiles/images/2%281124%29.jpg"));
 
-        mAdapter = new RecyclerViewAdapter(list);
-        mAdapter.setListener(this);
+        mAdapter.addItems(list);
+    }
 
-        mRecyclerView = findViewById(R.id.recyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(mAdapter);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        mListState = mLayoutManager.onSaveInstanceState();
+        outState.putParcelable(LIST_STATE_KEY, mListState);
+        outState.putParcelableArrayList(ITEMS_KEY, mAdapter.getItems());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            return;
+        }
+
+        mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
+
+        ArrayList<BaseObject> items = savedInstanceState.getParcelableArrayList(ITEMS_KEY);
+
+        if (items != null) {
+            mAdapter.addItems(items);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mListState != null) {
+            mLayoutManager.onRestoreInstanceState(mListState);
+        }
     }
 
     @Override

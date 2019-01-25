@@ -7,18 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements TextNewsViewHolder.OnItemClickListener, PhotoViewHolder.OnItemClickListener {
     private final int NEWS = 0, PHOTO = 1;
     private OnItemClickListener mListener;
 
-    private List<Object> items = new ArrayList<>();
-
-    public RecyclerViewAdapter(List<Object> items) {
-        this.items = items;
-        notifyDataSetChanged();
-    }
+    private ArrayList<BaseObject> mItems = new ArrayList<>();
 
     @NonNull
     @Override
@@ -40,43 +34,48 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (viewType == NEWS) {
             TextNewsViewHolder textViewHolder = (TextNewsViewHolder) holder;
-            textViewHolder.bind((TextNewsItem) items.get(position));
-            textViewHolder.setListener(this, (TextNewsItem) items.get(position), position);
+            textViewHolder.bind((TextNewsItem) mItems.get(position));
+            textViewHolder.setListener(this, (TextNewsItem) mItems.get(position), position);
             return;
         }
 
         if (viewType == PHOTO) {
             PhotoViewHolder imageViewHolder = (PhotoViewHolder) holder;
-            imageViewHolder.bind((PhotoItem) items.get(position));
-            imageViewHolder.setListener(this, (PhotoItem) items.get(position), position);
+            imageViewHolder.bind((PhotoItem) mItems.get(position));
+            imageViewHolder.setListener(this, (PhotoItem) mItems.get(position), position);
             return;
         }
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return mItems.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (items.get(position) instanceof TextNewsItem) {
+        if (mItems.get(position) instanceof TextNewsItem) {
             return NEWS;
         }
 
-        if (items.get(position) instanceof PhotoItem) {
+        if (mItems.get(position) instanceof PhotoItem) {
             return PHOTO;
         }
 
         return -1;
     }
 
-    public void addItem(Object item) {
+    public void addItems(ArrayList<BaseObject> items) {
+        this.mItems = items;
+        notifyDataSetChanged();
+    }
+
+    public void addItem(BaseObject item) {
         if (item == null || (!(item instanceof TextNewsItem) && !(item instanceof PhotoItem))) {
             return;
         }
 
-        items.add(item);
+        mItems.add(item);
         notifyDataSetChanged();
     }
 
@@ -86,17 +85,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onItemClick(Object object, int position) {
-        mListener.onItemClick(items.get(position), position);
-        removeAt(position);
+        mListener.onItemClick(mItems.get(position), position);
+        removeItem(position);
     }
 
     public interface OnItemClickListener {
         void onItemClick(Object object, int position);
     }
 
-    private void removeAt(int position) {
-        items.remove(position);
+    private void removeItem(int position) {
+        mItems.remove(position);
         notifyItemRemoved(position);
-        notifyItemRangeChanged(position, items.size());
+        notifyItemRangeChanged(position, mItems.size());
+    }
+
+    public ArrayList<BaseObject> getItems() {
+        return mItems;
     }
 }
